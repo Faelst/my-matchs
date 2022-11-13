@@ -10,7 +10,8 @@
       "@assets/*": ["src/assets/*"],
       "@config/*": ["src/config/*"],
       "@routes/*": ["src/routes/*"],
-      "@storage/*": ["src/storage/*"]
+      "@storage/*": ["src/storage/*"],
+      "@theme/*": ["src/theme/*"]
     }
   }
 }

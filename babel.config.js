@@ -15,6 +15,7 @@ module.exports = function (api) {
             '@config': './src/config',
             '@routes': './src/routes',
             '@storage': './src/storage',
+            '@theme': './src/theme',
           },
         },
       ],
