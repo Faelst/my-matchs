@@ -13,6 +13,6 @@ export const Container = styled(TextInput)`
   border-radius: 6px;
   padding: 16px;
 
-  font-size: ${({ theme }) => theme.FONT_SIZE.MD};
   font-family: ${({ theme }) => theme.FONT_FAMILY.REGULAR};
+  font-size: ${({ theme }) => theme.FONT_SIZE.MD};
 `;
