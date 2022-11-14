@@ -7,6 +7,7 @@ import { Highlight } from '@components/Highlight';
 import { ListEmpty } from '@components/ListEmpty';
 
 import * as S from './styles';
+import { Button } from '@components/Button';
 
 export function Groups() {
   const [groups, setGroups] = useState<string[]>([]);
@@ -19,17 +20,16 @@ export function Groups() {
 
       <FlatList
         data={groups}
-        keyExtractor={item => item}
-        renderItem={({ item }) => (
-          <GroupCard
-            title={item}
-            onPress={() => { }}
-          />
-        )}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => <GroupCard title={item} onPress={() => {}} />}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={() => <ListEmpty message="Que tal cadastrar a primeira turma ?" />}
+        ListEmptyComponent={() => (
+          <ListEmpty message="Que tal cadastrar a primeira turma ?" />
+        )}
         contentContainerStyle={groups.length === 0 && { flex: 1 }}
       />
+
+      <Button title="Cadastrar turma" onPress={() => {}} />
     </S.Container>
   );
 }
