@@ -1,5 +1,4 @@
 import { ThemeProvider } from 'styled-components/native';
-import { Groups } from '@screens/Groups';
 import theme from '@theme/index';
 import {
   useFonts,
@@ -8,7 +7,7 @@ import {
 } from '@expo-google-fonts/roboto';
 import { Loading } from '@components/loading';
 import { StatusBar } from 'react-native';
-import { NewGroup } from '@screens/NewGroup';
+import { Players } from '@screens/Players';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -24,7 +23,7 @@ export default function App() {
         translucent
       />
       <ThemeProvider theme={theme}>
-        {fontsLoaded ? <NewGroup /> : <Loading />}
+        {fontsLoaded ? <Players /> : <Loading />}
       </ThemeProvider>
     </>
   );
