@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Alert, FlatList } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Alert, FlatList, Keyboard, TextInput } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 
 import * as S from './styles';
@@ -14,6 +14,8 @@ import { ListEmpty } from '@components/ListEmpty';
 import { PlayerCard } from '@components/PlayerCard';
 import { AppError } from '@utils/AppError';
 import { playerAddByGroup } from '@storage/player/playerAddByGroup';
+import { playerGetByGroupAndTeam } from '@storage/player/playerGetByGroupAndTeam';
+import { PlayerStorageDTO } from '@storage/player/PlayerStorageDTO';
 
 type RouteParams = {
   group: string;
@@ -23,9 +25,11 @@ export function Players() {
   const route = useRoute();
   const { group } = route.params as RouteParams;
 
-  const [team, setTeam] = useState('');
-  const [players, setPlayers] = useState([]);
+  const [team, setTeam] = useState('Time A');
+  const [players, setPlayers] = useState<PlayerStorageDTO[]>([]);
   const [newPlayerName, setNewPlayerName] = useState('');
+
+  const newPlayerNameRef = useRef<TextInput>(null);
 
   const handleAddNewPlayer = async () => {
     if (!newPlayerName.trim().length) {
@@ -34,11 +38,15 @@ export function Players() {
 
     const newPlayer = {
       name: newPlayerName,
-      group,
+      team: team,
     };
 
     try {
       await playerAddByGroup(newPlayer, group);
+      fetchPlayersByTeam();
+
+      newPlayerNameRef.current?.blur();
+      Keyboard.dismiss();
     } catch (error) {
       if (error instanceof AppError) {
         return Alert.alert('Novo Jogador', error.message);
@@ -50,6 +58,19 @@ export function Players() {
     }
   };
 
+  const fetchPlayersByTeam = async () => {
+    try {
+      const playersByTeam = await playerGetByGroupAndTeam(group, team);
+      setPlayers(playersByTeam);
+    } catch (error) {
+      Alert.alert('Jogadores', 'Erro ao buscar jogadores');
+    }
+  };
+
+  useEffect(() => {
+    fetchPlayersByTeam();
+  }, [team]);
+
   return (
     <S.Container>
       <Header showBackButton />
@@ -58,9 +79,13 @@ export function Players() {
 
       <S.Form>
         <Input
+          inputRef={newPlayerNameRef}
           placeholder="Nome do jogador"
           autoCorrect={false}
           onChangeText={setNewPlayerName}
+          value={newPlayerName}
+          onSubmitEditing={handleAddNewPlayer}
+          returnKeyType="done"
         />
         <ButtonIcon type="PRIMARY" icon="add" onPress={handleAddNewPlayer} />
       </S.Form>
@@ -86,7 +111,7 @@ export function Players() {
         data={players}
         keyExtractor={(item) => String(item)}
         renderItem={({ item }) => (
-          <PlayerCard name={item} onRemove={() => {}} />
+          <PlayerCard name={item.name} onRemove={() => {}} />
         )}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={<ListEmpty message="Nenhum jogador encontrado" />}

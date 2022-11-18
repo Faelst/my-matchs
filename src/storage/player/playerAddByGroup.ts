@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PLAYER_COLLECTION } from '@storage/config';
 import { AppError } from '@utils/AppError';
-import { playerGetAll } from './playerGetByGroup';
+import { playerGetByGroup } from './playerGetByGroup';
 import { PlayerStorageDTO } from './PlayerStorageDTO';
 
 export async function playerAddByGroup(
@@ -9,7 +9,7 @@ export async function playerAddByGroup(
   group: string
 ) {
   try {
-    const storagePlayers = await playerGetAll(group);
+    const storagePlayers = await playerGetByGroup(group);
 
     const isPlayerAlreadyExists = storagePlayers.some(
       (player) => player.name === newPlayer.name
