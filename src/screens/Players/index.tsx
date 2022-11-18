@@ -74,9 +74,10 @@ export function Players() {
       setIsLoaded(true);
       const playersByTeam = await playerGetByGroupAndTeam(group, team);
       setPlayers(playersByTeam);
-      setIsLoaded(false);
     } catch (error) {
       Alert.alert('Jogadores', 'Erro ao buscar jogadores');
+    } finally {
+      setIsLoaded(false);
     }
   };
 

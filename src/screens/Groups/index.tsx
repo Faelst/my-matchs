@@ -33,9 +33,10 @@ export function Groups() {
       setIsLoaded(true);
       const storageGroups = await groupGetAll();
       setGroups(storageGroups);
-      setIsLoaded(false);
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoaded(false);
     }
   };
 
