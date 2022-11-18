@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FlatList } from 'react-native';
+import { Alert, FlatList } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 
 import * as S from './styles';
@@ -12,6 +12,8 @@ import { Highlight } from '@components/Highlight';
 import { Input } from '@components/Input';
 import { ListEmpty } from '@components/ListEmpty';
 import { PlayerCard } from '@components/PlayerCard';
+import { AppError } from '@utils/AppError';
+import { playerAddByGroup } from '@storage/player/playerAddByGroup';
 
 type RouteParams = {
   group: string;
@@ -23,6 +25,30 @@ export function Players() {
 
   const [team, setTeam] = useState('');
   const [players, setPlayers] = useState([]);
+  const [newPlayerName, setNewPlayerName] = useState('');
+
+  const handleAddNewPlayer = async () => {
+    if (!newPlayerName.trim().length) {
+      return Alert.alert('Novo Jogador', 'Informe o nome do jogador');
+    }
+
+    const newPlayer = {
+      name: newPlayerName,
+      group,
+    };
+
+    try {
+      await playerAddByGroup(newPlayer, group);
+    } catch (error) {
+      if (error instanceof AppError) {
+        return Alert.alert('Novo Jogador', error.message);
+      }
+
+      Alert.alert('Novo Jogador', 'Erro ao cadastrar jogador');
+    } finally {
+      setNewPlayerName('');
+    }
+  };
 
   return (
     <S.Container>
@@ -31,13 +57,17 @@ export function Players() {
       <Highlight title={group} subtitle="Adicione a galera para jogar" />
 
       <S.Form>
-        <Input placeholder="Nome do jogador" autoCorrect={false} />
-        <ButtonIcon type="PRIMARY" icon="add" />
+        <Input
+          placeholder="Nome do jogador"
+          autoCorrect={false}
+          onChangeText={setNewPlayerName}
+        />
+        <ButtonIcon type="PRIMARY" icon="add" onPress={handleAddNewPlayer} />
       </S.Form>
 
       <S.HeaderList>
         <FlatList
-          data={['Time A', 'Time B', 'Time C', 'Time D', 'Time E', 'Time F']}
+          data={['Time A', 'Time B']}
           keyExtractor={(item) => String(item)}
           renderItem={({ item }) => (
             <Filter

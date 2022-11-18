@@ -35,6 +35,10 @@ export function Groups() {
     }
   };
 
+  const handleOpenGroup = (group: string) => {
+    navigation.navigate('players', { group });
+  };
+
   return (
     <S.Container>
       <Header />
@@ -44,7 +48,9 @@ export function Groups() {
       <FlatList
         data={groups}
         keyExtractor={(item) => item}
-        renderItem={({ item }) => <GroupCard title={item} onPress={() => {}} />}
+        renderItem={({ item }) => (
+          <GroupCard title={item} onPress={() => handleOpenGroup(item)} />
+        )}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={() => (
           <ListEmpty message="Que tal cadastrar a primeira turma ?" />
