@@ -7,6 +7,8 @@ import { Highlight } from '@components/Highlight';
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
 import { groupCreate } from '@storage/group/groupCreate';
+import { AppError } from '@utils/AppError';
+import { Alert } from 'react-native';
 
 export function NewGroup() {
   const [group, setGroup] = useState('');
@@ -15,9 +17,18 @@ export function NewGroup() {
 
   const handleNew = async () => {
     try {
+      if (!group.trim().length) {
+        throw new AppError('Informe o nome da turma corretamente');
+      }
+
       await groupCreate(group);
       navigation.navigate('players', { group });
     } catch (error) {
+      if (error instanceof AppError) {
+        return Alert.alert('Novo Grupo', error.message);
+      }
+
+      Alert.alert('Novo Grupo', 'Erro ao cadastrar grupo');
       console.log(error);
     }
   };
