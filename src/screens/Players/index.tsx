@@ -11,8 +11,11 @@ import { Header } from '@components/Header';
 import { Highlight } from '@components/Highlight';
 import { Input } from '@components/Input';
 import { ListEmpty } from '@components/ListEmpty';
+import { Loading } from '@components/loading';
 import { PlayerCard } from '@components/PlayerCard';
+
 import { AppError } from '@utils/AppError';
+
 import { playerAddByGroup } from '@storage/player/playerAddByGroup';
 import { playerGetByGroupAndTeam } from '@storage/player/playerGetByGroupAndTeam';
 import { PlayerStorageDTO } from '@storage/player/PlayerStorageDTO';
@@ -24,6 +27,7 @@ type RouteParams = {
 };
 
 export function Players() {
+  const [isLoaded, setIsLoaded] = useState(true);
   const navigation = useNavigation();
   const route = useRoute();
   const { group } = route.params as RouteParams;
@@ -67,8 +71,10 @@ export function Players() {
 
   const fetchPlayersByTeam = async () => {
     try {
+      setIsLoaded(true);
       const playersByTeam = await playerGetByGroupAndTeam(group, team);
       setPlayers(playersByTeam);
+      setIsLoaded(false);
     } catch (error) {
       Alert.alert('Jogadores', 'Erro ao buscar jogadores');
     }
@@ -143,23 +149,26 @@ export function Players() {
         />
         <S.NumberOfPlayers>{players.length}</S.NumberOfPlayers>
       </S.HeaderList>
-
-      <FlatList
-        data={players}
-        keyExtractor={(item) => String(item)}
-        renderItem={({ item }) => (
-          <PlayerCard
-            name={item.name}
-            onRemove={() => handleRemovePlayer(item)}
-          />
-        )}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<ListEmpty message="Nenhum jogador encontrado" />}
-        contentContainerStyle={[
-          { paddingBottom: 20 },
-          players.length === 0 && { flex: 1 },
-        ]}
-      />
+      {isLoaded ? (
+        <Loading />
+      ) : (
+        <FlatList
+          data={players}
+          keyExtractor={(item) => String(item)}
+          renderItem={({ item }) => (
+            <PlayerCard
+              name={item.name}
+              onRemove={() => handleRemovePlayer(item)}
+            />
+          )}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={<ListEmpty message="Nenhum jogador encontrado" />}
+          contentContainerStyle={[
+            { paddingBottom: 20 },
+            players.length === 0 && { flex: 1 },
+          ]}
+        />
+      )}
 
       <Button
         title="Remover turma"
